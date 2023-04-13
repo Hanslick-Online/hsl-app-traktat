@@ -1,0 +1,54 @@
+name: Fetch build and publish
+
+on:
+  schedule:
+  - cron: "20 */12 * * *"
+  workflow_dispatch:
+
+jobs:
+  build_pages:
+    name: Publish Edition as GitHub Pages Website
+    runs-on: ubuntu-latest
+    env:
+      ANT_OPTS: -Xmx5g
+      TYPESENSE_HOST: typesense.acdh-dev.oeaw.ac.at
+      TYPESENSE_PORT: 443
+      TYPESENSE_PROTOCOL: https
+      TYPESENSE_API_KEY: ${{secrets.TYPESENSE_API_KEY}}
+    steps:
+    - name: Perform Checkout
+      uses: actions/checkout@v3
+    - name: Fetch data
+      run: |
+        ./fetch_data_app.sh
+    - name: Fetch data
+      run: |
+        ./build_app/shell/fetch_data.sh
+    - name: Install Saxon, Ant and Fundament, staticSearch
+      run: |
+        apt-get update && apt-get install openjdk-11-jre-headless ant -y --no-install-recommend
+        ./build_app/shell/script.sh
+    - name: Install Ant-Contrib
+      run: |
+        wget https://repo1.maven.org/maven2/ant-contrib/ant-contrib/1.0b3/ant-contrib-1.0b3.jar
+        mv ant-contrib-1.0b3.jar /usr/share/ant/lib
+    - name: Reorganize data
+      run: |
+        ant -f build_app/ant/preprocess.xml
+    - name: Add attributes
+      run: |
+        pip install -U pip
+        pip install -r build_app/python/requirements.txt
+        ./build_app/shell/attributes.sh
+        python build_app/python/denormalize_indices.py
+    - name: Build
+      run: |
+        ant -f build_app/ant/build.xml
+    # - name: Build Typesense Index
+    #   run: |
+    #     python build_app/python/make_ts_index.py
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./html

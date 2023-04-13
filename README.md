@@ -1,7 +1,7 @@
-[![Build and publish](https://github.com/Hanslick-Online/hsl-app/actions/workflows/build.yml/badge.svg)](https://github.com/Hanslick-Online/hsl-app/actions/workflows/build.yml) [![DOI](https://zenodo.org/badge/595061840.svg)](https://zenodo.org/badge/latestdoi/595061840)
+[![Build and publish](https://github.com/Hanslick-Online/hsl-app-dev/actions/workflows/build.yml/badge.svg)](https://github.com/Hanslick-Online/hsl-app-dev/actions/workflows/build.yml) [![DOI](https://zenodo.org/badge/595061840.svg)](https://zenodo.org/badge/latestdoi/595061840)
 
 
-# Digital Scholarly Edition Hanslick Online
+# Digital Scholarly Edition Hanslick Online (Development Version)
 
 ## Ordnerstruktur
 
